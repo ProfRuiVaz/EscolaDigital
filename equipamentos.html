@@ -54,7 +54,7 @@ window.carregar = async function () {
 
   let query = supabase
     .from("equipamentos")
-    .select("id, nome_aluno as aluno, numero_interno as numero")
+    .select("*")
     .order(ordem[0], { ascending: ordem[1] === "asc" })
     .range(pagina * tamanho, pagina * tamanho + tamanho - 1);
 
