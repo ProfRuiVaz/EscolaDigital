@@ -13,31 +13,55 @@
     <pre id="resultado"></pre>
 
     <!-- SDK via ES Modules -->
-    <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Criar cliente Supabase
-        const supabase = createClient(
-            "https://mnbvvmeveiipkwalashs.supabase.co",
-            "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
-        );
+  const supabase = createClient(
+    "https://mnbvvmeveiipkwalashs.supabase.co",
+    "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
+  );
 
-        // Tornar a função global para o botão conseguir chamá‑la
-        window.carregarEquipamentos = async function () {
-            const resultado = document.getElementById("resultado");
+  window.carregarEquipamentos = async function () {
+    const resultado = document.getElementById("resultado");
 
-            const { data, error } = await supabase
-                .from("equipamentos")
-                .select("*");
+    const { data, error } = await supabase
+      .from("equipamentos")
+      .select("*");
 
-            if (error) {
-                resultado.textContent = "Erro: " + error.message;
-                return;
-            }
+    if (error) {
+      resultado.textContent = "Erro: " + error.message;
+      return;
+    }
 
-            resultado.textContent = JSON.stringify(data, null, 2);
-        };
-    </script>
+    if (!data || data.length === 0) {
+      resultado.textContent = "Sem dados.";
+      return;
+    }
+
+    // Criar tabela HTML
+    let html = "<table border='1' cellpadding='6'><tr>";
+
+    // Cabeçalhos (usa as chaves do primeiro registo)
+    Object.keys(data[0]).forEach(col => {
+      html += `<th>${col}</th>`;
+    });
+    html += "</tr>";
+
+    // Linhas
+    data.forEach(row => {
+      html += "<tr>";
+      Object.values(row).forEach(value => {
+        html += `<td>${value === null ? "" : value}</td>`;
+      });
+      html += "</tr>";
+    });
+
+    html += "</table>";
+
+    resultado.innerHTML = html;
+  };
+</script>
+
 
 </body>
 </html>
