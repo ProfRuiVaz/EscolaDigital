@@ -94,12 +94,16 @@
 
       window.guardarEdicao = async function () {
         const numero = document.getElementById("edit_numero").value;
+        const fase = document.getElementById("edit_fase").value;
+        const estado = document.getElementById("edit_estado").value;
         const nome = document.getElementById("edit_nome").value;
 
         const { error } = await supabase
           .from("equipamentos")
           .update({
             numero_interno: numero,
+            fase: fase,
+            estado: estado,
             nome_aluno: nome
           })
           .eq("id", idAEditar);
@@ -109,7 +113,7 @@
           return;
         }
 
-        alert("Alterações guardadas!");
+        alert("Alterações guardadas com sucesso!");
         document.getElementById("editor").style.display = "none";
         carregarEquipamentos();
       };
