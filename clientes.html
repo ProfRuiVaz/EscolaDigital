@@ -12,8 +12,77 @@
 
     <pre id="resultado"></pre>
 
+    <div id="editor" style="display:none; margin-top:20px;">
+  <h3>Editar Equipamento</h3>
+
+  <label>Número Interno:</label><br>
+  <input id="edit_numero" type="text"><br><br>
+
+  <label>Nome do Aluno:</label><br>
+  <input id="edit_nome" type="text"><br><br>
+
+  <button onclick="guardarEdicao()">Guardar</button>
+  <button onclick="cancelarEdicao()">Cancelar</button>
+</div>
+
+
     <!-- SDK via ES Modules -->
 <script type="module">
+let idAEditar = null;
+
+// Função chamada ao clicar no botão "Editar"
+window.editar = async function (id) {
+  idAEditar = id;
+
+  const { data, error } = await supabase
+    .from("equipamentos")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    alert("Erro ao carregar dados: " + error.message);
+    return;
+  }
+
+  // Preencher o formulário
+  document.getElementById("edit_numero").value = data.numero_interno;
+  document.getElementById("edit_nome").value = data.nome_aluno;
+
+  // Mostrar o editor
+  document.getElementById("editor").style.display = "block";
+};
+
+// Guardar alterações
+window.guardarEdicao = async function () {
+  const numero = document.getElementById("edit_numero").value;
+  const nome = document.getElementById("edit_nome").value;
+
+  const { error } = await supabase
+    .from("equipamentos")
+    .update({
+      numero_interno: numero,
+      nome_aluno: nome
+    })
+    .eq("id", idAEditar);
+
+  if (error) {
+    alert("Erro ao guardar: " + error.message);
+    return;
+  }
+
+  alert("Alterações guardadas com sucesso!");
+
+  document.getElementById("editor").style.display = "none";
+  carregarEquipamentos(); // Atualiza a tabela
+};
+
+// Cancelar edição
+window.cancelarEdicao = function () {
+  document.getElementById("editor").style.display = "none";
+};
+
+    
   import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
   const supabase = createClient(
@@ -48,13 +117,20 @@
     html += "</tr>";
 
     // Linhas
-    data.forEach(row => {
-      html += "<tr>";
-      Object.values(row).forEach(value => {
-        html += `<td>${value === null ? "" : value}</td>`;
-      });
-      html += "</tr>";
-    });
+// Linhas
+data.forEach(row => {
+  html += "<tr>";
+
+  Object.values(row).forEach(value => {
+    html += `<td>${value === null ? "" : value}</td>`;
+  });
+
+  // Botão Editar
+  html += `<td><button onclick="editar(${row.id})">Editar</button></td>`;
+
+  html += "</tr>";
+});
+
 
     html += "</table>";
 
