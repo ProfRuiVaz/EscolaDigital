@@ -47,7 +47,7 @@
 
         const { data, error } = await supabase
           .from("equipamentos")
-          .select("numero_interno, fase, estado, nome_aluno");
+          .select("*");
 
         if (error) {
           resultado.textContent = "Erro: " + error.message;
@@ -83,7 +83,7 @@
 
         const { data, error } = await supabase
           .from("equipamentos")
-          .select("*")
+          .select("numero_interno, fase, estado, nome_aluno")
           .eq("id", id)
           .single();
 
