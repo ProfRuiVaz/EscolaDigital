@@ -1,17 +1,23 @@
-<%@ page import="java.sql.*" %>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabase = supabase.createClient(
+    "https://mnbvvmeveiipkwalashs.supabase.co",
+    "Ssb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
+  );
+</script>
 
-<%
-    String url = "jdbc:postgresql://db.mnbvvmeveiipkwalashs.supabase.co:5432/postgres?;
-    String user = "postgres";
-    String password = "Digit@l22-23_2025";
+<script>
+async function carregarEquipamentos() {
+  const { data, error } = await supabase
+    .from('equipamentos')
+    .select('*');
 
-    Connection conn = null;
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-    try {
-        Class.forName("org.postgresql.Driver");
-        conn = DriverManager.getConnection(url, user, password);
-        out.println("Ligação OK ao Supabase");
-    } catch (Exception e) {
-        out.println("Erro: " + e.getMessage());
-    }
-%>
+  console.log(data);
+}
+carregarEquipamentos();
+</script>
