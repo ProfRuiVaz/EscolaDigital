@@ -2,6 +2,137 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
+    <title>Supabase Teste</title>
+</head>
+<body>
+
+    <h1>Ligação ao Supabase</h1>
+
+    <button onclick="carregarEquipamentos()">Carregar Equipamentos</button>
+
+    <pre id="resultado"></pre>
+
+    <div id="editor" style="display:none; margin-top:20px;">
+      <h3>Editar Equipamento</h3>
+
+      <label>Número Interno:</label><br>
+      <input id="edit_numero" type="text"><br><br>
+
+      <label>Nome do Aluno:</label><br>
+      <input id="edit_nome" type="text"><br><br>
+
+      <button onclick="guardarEdicao()">Guardar</button>
+      <button onclick="cancelarEdicao()">Cancelar</button>
+    </div>
+
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+      const supabase = createClient(
+        "https://mnbvvmeveiipkwalashs.supabase.co",
+        "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
+      );
+
+      let idAEditar = null;
+
+      window.carregarEquipamentos = async function () {
+        const resultado = document.getElementById("resultado");
+
+        const { data, error } = await supabase
+          .from("equipamentos")
+          .select("*");
+
+        if (error) {
+          resultado.textContent = "Erro: " + error.message;
+          return;
+        }
+
+        let html = "<table border='1' cellpadding='6'><tr>";
+
+        Object.keys(data[0]).forEach(col => {
+          html += `<th>${col}</th>`;
+        });
+
+        html += "<th>Ações</th></tr>";
+
+        data.forEach(row => {
+          html += "<tr>";
+
+          Object.values(row).forEach(value => {
+            html += `<td>${value ?? ""}</td>`;
+          });
+
+          html += `<td><button onclick="editar('${row.id}')">Editar</button></td>`;
+          html += "</tr>";
+        });
+
+        html += "</table>";
+
+        resultado.innerHTML = html;
+      };
+
+      window.editar = async function (id) {
+        idAEditar = id;
+
+        const { data, error } = await supabase
+          .from("equipamentos")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          alert("Erro ao carregar dados: " + error.message);
+          return;
+        }
+
+        document.getElementById("edit_numero").value = data.numero_interno;
+        document.getElementById("edit_nome").value = data.nome_aluno;
+
+        document.getElementById("editor").style.display = "block";
+      };
+
+      window.guardarEdicao = async function () {
+        const numero = document.getElementById("edit_numero").value;
+        const nome = document.getElementById("edit_nome").value;
+
+        const { error } = await supabase
+          .from("equipamentos")
+          .update({
+            numero_interno: numero,
+            nome_aluno: nome
+          })
+          .eq("id", idAEditar);
+
+        if (error) {
+          alert("Erro ao guardar: " + error.message);
+          return;
+        }
+
+        alert("Alterações guardadas!");
+        document.getElementById("editor").style.display = "none";
+        carregarEquipamentos();
+      };
+
+      window.cancelarEdicao = function () {
+        document.getElementById("editor").style.display = "none";
+      };
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+<!--
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
     <title>Teste Escola Digital</title>
 </head>
 <body>
@@ -26,7 +157,7 @@
 </div>
 
 
-    <!-- SDK via ES Modules -->
+    <!-- SDK via ES Modules 
 <script type="module">
 let idAEditar = null;
 
@@ -141,3 +272,5 @@ data.forEach(row => {
 
 </body>
 </html>
+
+-->
