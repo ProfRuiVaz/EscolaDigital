@@ -12,23 +12,23 @@
 
     <pre id="resultado"></pre>
 
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SDK via ES Modules -->
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    <script>
-        // Criar cliente Supabase (correto)
-        const client = window.supabase.createClient(
+        // Criar cliente Supabase
+        const supabase = createClient(
             "https://mnbvvmeveiipkwalashs.supabase.co",
             "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
         );
 
-        // Função para carregar dados
-        async function carregarEquipamentos() {
+        // Tornar a função global para o botão conseguir chamá‑la
+        window.carregarEquipamentos = async function () {
             const resultado = document.getElementById("resultado");
 
-            const { data, error } = await client
-                .from('equipamentos')
-                .select('*');
+            const { data, error } = await supabase
+                .from("equipamentos")
+                .select("*");
 
             if (error) {
                 resultado.textContent = "Erro: " + error.message;
@@ -36,7 +36,7 @@
             }
 
             resultado.textContent = JSON.stringify(data, null, 2);
-        }
+        };
     </script>
 
 </body>
