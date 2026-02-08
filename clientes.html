@@ -47,7 +47,7 @@
 
         const { data, error } = await supabase
           .from("equipamentos")
-          .select("numero_interno as Num_interno, fase as Fase, estado as Estado, nome as Nome");
+          .select("fase as Fase, estado as Estado, nome as Nome");
 
         if (error) {
           resultado.textContent = "Erro: " + error.message;
