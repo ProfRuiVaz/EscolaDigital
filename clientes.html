@@ -16,17 +16,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // Criar cliente Supabase (apenas uma vez!)
-      const supabase = Supabase.createClient(
-        "https://mnbvvmeveiipkwalashs.supabase.co",
-        "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
-      );
+        // Criar cliente Supabase (correto)
+        const client = window.supabase.createClient(
+            "https://mnbvvmeveiipkwalashs.supabase.co",
+            "sb_publishable_I2_Ssd4fUrbL_ht2u0Zf9g_p7cBAGP4"
+        );
 
         // Função para carregar dados
         async function carregarEquipamentos() {
             const resultado = document.getElementById("resultado");
 
-            const { data, error } = await supabase
+            const { data, error } = await client
                 .from('equipamentos')
                 .select('*');
 
