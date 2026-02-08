@@ -21,7 +21,7 @@
 
 async function carregarEquipamentos() { 
   const { data, error } = await supabase 
-    .from('equipamentos') 
+    .from('public.equipamentos') 
     .select('*'); 
   
   if (error) { 
